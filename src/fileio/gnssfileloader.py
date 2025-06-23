@@ -10,7 +10,6 @@ from common.angle import Angle
 
 class GnssFileLoader:
     def __init__(self, filename: str):
-        self.gnss_ = GNSS()
         self.data_ = np.genfromtxt(filename, delimiter=None)
         self.index = 0
 
@@ -18,14 +17,15 @@ class GnssFileLoader:
         if self.index >= self.data_.shape[0]:
             return None
         data_ = self.data_[self.index, :]
-        self.gnss_.time = data_[0]
-        self.gnss_.blh = np.array(data_[1:4])
-        self.gnss_.std = np.array(data_[4:7])
-        self.gnss_.blh[0] *= Angle.D2R
-        self.gnss_.blh[1] *= Angle.D2R
+        gnss_ = GNSS()
+        gnss_.time = data_[0]
+        gnss_.blh = np.array(data_[1:4])
+        gnss_.std = np.array(data_[4:7])
+        gnss_.blh[0] *= Angle.D2R
+        gnss_.blh[1] *= Angle.D2R
         self.index += 1
 
-        return self.gnss_
+        return gnss_
 
     def starttime(self):
         return self.data_[0, 0]
