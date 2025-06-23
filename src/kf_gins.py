@@ -8,16 +8,16 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 src_dir = os.path.join(cur_dir, '..')
 sys.path.append(src_dir)
 
-import kfgins.kf_gins_types as kf
+from kfgins.kf_gins_types import GINSOptions
 from common.angle import Angle
-import common.types_my as ty
+from common.types import IMU, GNSS
 from fileio.gnssfileloader import GnssFileLoader
 from fileio.imufileloader import ImuFileLoader
-import kfgins.gi_engine as gi
+from kfgins.gi_engine import GIEngine
 
 # 从配置文件中读取GIEngine相关的初始状态，并转换为标准单位
 # Load initial states of GIEngine from configuration file and convert them to standard units
-def loadConfig(config, options: kf.GINSOptions):
+def loadConfig(config, options:GINSOptions):
     # 读取初始位置(纬度 经度 高程)、(北向速度 东向速度 垂向速度)、姿态(欧拉角，ZYX旋转顺序, 横滚角、俯仰角、航向角)
     # load initial position(latitude longitude altitude)
     #              velocity(speeds in the directions of north, east and down)
@@ -122,8 +122,6 @@ if __name__ == "__main__":
     
     print("\033[1m" + "KF-GINS: An EKF-Based GNSS/INS Integrated Navigation System\n" + "\033[0m")
 
-    # 加载配置文件
-    # load configuration file
     try:
         filename = None
         if args.conf is None:
@@ -136,26 +134,25 @@ if __name__ == "__main__":
         print(f"Error details: {str(e)}")
         raise Exception("Failed to read configuration file. Please check the path and format of the configuration file!")
 
-    options = kf.GINSOptions()
+    options = GINSOptions()
     loadConfig(config, options)
-    # print(config)
 
     imupath    = config['imupath']
     gnsspath   = config['gnsspath']
     outputpath = config['outputpath']
-
-    imudatalen  = (config["imudatalen"])
-    imudatarate = (config["imudatarate"])
-    starttime   = (config["starttime"])
-    endtime     = (config["endtime"])
+    imudatalen  = int(config["imudatalen"])
+    imudatarate = int(config["imudatarate"])
+    starttime   = float(config["starttime"])
+    endtime     = float(config["endtime"])
 
     # 加载GNSS文件和IMU文件
     # load GNSS file and IMU file
     gnssfile = GnssFileLoader(gnsspath)
     imufile = ImuFileLoader(imupath, imudatalen, imudatarate)
 
-    giengine = gi.GIEngine()
-    giengine.GIFunction(options)
+    # 构造GIEngine
+    # Construct GIEngine
+    giengine = GIEngine(options)
 
     if endtime < 0 :
         endtime = imufile.endtime()
@@ -165,24 +162,21 @@ if __name__ == "__main__":
     
     # 数据对齐
     # data alignment
-    imu_cur = ty.IMU()
+    imu_cur = IMU()
     while True:
         imu_cur = imufile.next()
         if imu_cur.time >= starttime:
             break
 
-    gnss = ty.GNSS()
+    gnss = GNSS()
     while True:
         gnss = gnssfile.next()
         if gnss.time >= starttime:
             break
     
-    # 添加IMU数据到GIEngine中，补偿IMU误差
-    # add imudata to GIEngine and compensate IMU error
+    # 添加IMU和GNSS数据到GIEngine中，补偿IMU误差
+    # add imudata and gnssdata to GIEngine, compensate IMU error
     giengine.addImuData(imu_cur, True)
-
-    # 添加GNSS数据到GIEngine
-    # add gnssdata to GIEngine
     giengine.addGnssData(gnss)
 
     nav_result = np.empty((0, 11))
@@ -226,10 +220,23 @@ if __name__ == "__main__":
             np.round(navstate.euler[1]* Angle.R2D, 9),
             np.round(navstate.euler[2]* Angle.R2D, 9)])
 
-        # result2 = np.array([np.round(timestamp,9),np.round(imuerr.gyrbias[0]* Angle.R2D*3600,9),np.round(imuerr.gyrbias[1]* Angle.R2D*3600,9),  np.round(imuerr.gyrbias[2]* Angle.R2D*3600,9),np.round(imuerr.accbias[0]* 1e5,9), np.round(imuerr.accbias[1]* 1e5,9), np.round(imuerr.accbias[2]* 1e5,9),np.round(imuerr.gyrscale[0] * 1e6,9),np.round(imuerr.gyrscale[1] * 1e6,9),np.round(imuerr.gyrscale[2] * 1e6,9),np.round(imuerr.accscale[0] * 1e6,9),np.round(imuerr.accscale[1] * 1e6,9),np.round(imuerr.accscale[2] * 1e6,9)])
+        result2 = np.array([
+            np.round(timestamp,9),
+            np.round(imuerr.gyrbias[0]* Angle.R2D*3600,9),
+            np.round(imuerr.gyrbias[1]* Angle.R2D*3600,9),
+            np.round(imuerr.gyrbias[2]* Angle.R2D*3600,9),
+            np.round(imuerr.accbias[0]* 1e5,9),
+            np.round(imuerr.accbias[1]* 1e5,9),
+            np.round(imuerr.accbias[2]* 1e5,9),
+            np.round(imuerr.gyrscale[0] * 1e6,9),
+            np.round(imuerr.gyrscale[1] * 1e6,9),
+            np.round(imuerr.gyrscale[2] * 1e6,9),
+            np.round(imuerr.accscale[0] * 1e6,9),
+            np.round(imuerr.accscale[1] * 1e6,9),
+            np.round(imuerr.accscale[2] * 1e6,9)])
 
         nav_result = np.vstack((nav_result, result1))
-        # error_result = np.vstack((error_result, result2))
+        error_result = np.vstack((error_result, result2))
 
         progress = (timestamp - starttime) / (endtime - starttime) * 100
         sys.stdout.write('\r[{:.2f}%]'.format(progress) + str(timestamp))
@@ -237,5 +244,5 @@ if __name__ == "__main__":
     
     print("\nFinished in {:.2f} seconds".format(time.time() - process_time))
 
-    np.savetxt(config['outputpath']+'/KF_GINS_Navresult-py.nav', nav_result, delimiter=" ",fmt="%.9f")    
-    np.savetxt(config['outputpath']+'/KF_GINS_IMU_ERR-py.txt', error_result, delimiter=" ",fmt="%.9f")
+    np.savetxt(config['outputpath']+'/KF_GINS_Navresult.nav', nav_result, delimiter=" ",fmt="%.9f")    
+    np.savetxt(config['outputpath']+'/KF_GINS_IMU_ERR.txt', error_result, delimiter=" ",fmt="%.9f")

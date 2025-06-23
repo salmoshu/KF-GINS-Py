@@ -5,8 +5,7 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 src_dir = os.path.join(cur_dir, '..')
 sys.path.append(src_dir)
 
-from common.types_my import IMU
-
+from common.types import IMU
 
 class ImuFileLoader:
     def __init__(self, filename:str, columns:int, rate:int):
@@ -16,7 +15,6 @@ class ImuFileLoader:
         self.index = 0
 
     def next(self):
-
         if self.index >= self.data_.shape[0]:
             return None
         data_ = self.data_[self.index, :]
@@ -33,10 +31,10 @@ class ImuFileLoader:
         self.index += 1
 
         return self.imu_
-    
+
     def starttime(self):
         return self.data_[0, 0]
-    
+
     def endtime(self):
         return self.data_[-1, 0]
     

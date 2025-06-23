@@ -302,8 +302,7 @@ def calcNavresultError(navresult_filepath, refresult_filepath):
 if __name__ == '__main__':
 
     # 导航结果和导航误差
-    # navresult_filepath = "E:\Proj-Enhanced\KF-GINS\dataset\KF_GINS_Navresult.nav"
-    navresult_filepath = '../dataset/KF_GINS_Navresult-py.nav'
+    navresult_filepath = '../dataset/KF_GINS_Navresult.nav'
     refresult_filepath = '../dataset/truth.nav'
     # 导航结果
     # plotNavresult(navresult_filepath)

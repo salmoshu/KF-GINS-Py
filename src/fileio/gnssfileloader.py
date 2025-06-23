@@ -5,7 +5,7 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 src_dir = os.path.join(cur_dir, '..')
 sys.path.append(src_dir)
 
-from common.types_my import GNSS
+from common.types import GNSS
 from common.angle import Angle
 
 class GnssFileLoader:
@@ -13,7 +13,7 @@ class GnssFileLoader:
         self.gnss_ = GNSS()
         self.data_ = np.genfromtxt(filename, delimiter=None)
         self.index = 0
-        
+
     def next(self):
         if self.index >= self.data_.shape[0]:
             return None
@@ -26,12 +26,12 @@ class GnssFileLoader:
         self.index += 1
 
         return self.gnss_
-    
+
     def starttime(self):
         return self.data_[0, 0]
-    
+
     def endtime(self):
         return self.data_[-1, 0]
-    
+        
     def isEof(self):
         return self.index >= self.data_.shape[0]

@@ -38,10 +38,10 @@ class ImuNoise:
 
 class GINSOptions:
     def __init__(self):
-        ##  初始状态和状态标准差
+        #  初始状态和状态标准差
         self.initstate = NavState()
         self.initstate_std = NavState()
-        ##  IMU噪声参数
+        #  IMU噪声参数
         self.imunoise = ImuNoise()
         ##  安装参数
         self.antlever = np.zeros(3)
