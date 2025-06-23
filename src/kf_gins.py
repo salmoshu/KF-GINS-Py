@@ -184,6 +184,9 @@ if __name__ == "__main__":
 
     process_time = time.time()
 
+    f_nav = open(config['outputpath']+'/KF_GINS_Navresult.nav', 'w') 
+    f_err = open(config['outputpath']+'/KF_GINS_IMU_ERR.txt', 'w')
+
     while True:
         # 当前IMU状态时间新于GNSS时间时，读取并添加新的GNSS数据到GIEngine
         # load new gnssdata when current state time is newer than GNSS time and add it to GIEngine
@@ -216,33 +219,32 @@ if __name__ == "__main__":
             np.round(navstate.vel[0], 9),
             np.round(navstate.vel[1], 9),
             np.round(navstate.vel[2], 9),
-            np.round(navstate.euler[0]* Angle.R2D, 9),
-            np.round(navstate.euler[1]* Angle.R2D, 9),
-            np.round(navstate.euler[2]* Angle.R2D, 9)])
+            np.round(navstate.euler[0]*Angle.R2D, 9),
+            np.round(navstate.euler[1]*Angle.R2D, 9),
+            np.round(navstate.euler[2]*Angle.R2D, 9)])
 
         result2 = np.array([
-            np.round(timestamp,9),
-            np.round(imuerr.gyrbias[0]* Angle.R2D*3600,9),
-            np.round(imuerr.gyrbias[1]* Angle.R2D*3600,9),
-            np.round(imuerr.gyrbias[2]* Angle.R2D*3600,9),
-            np.round(imuerr.accbias[0]* 1e5,9),
-            np.round(imuerr.accbias[1]* 1e5,9),
-            np.round(imuerr.accbias[2]* 1e5,9),
-            np.round(imuerr.gyrscale[0] * 1e6,9),
-            np.round(imuerr.gyrscale[1] * 1e6,9),
-            np.round(imuerr.gyrscale[2] * 1e6,9),
-            np.round(imuerr.accscale[0] * 1e6,9),
-            np.round(imuerr.accscale[1] * 1e6,9),
-            np.round(imuerr.accscale[2] * 1e6,9)])
+            np.round(timestamp, 9),
+            np.round(imuerr.gyrbias[0]*Angle.R2D*3600, 9),
+            np.round(imuerr.gyrbias[1]*Angle.R2D*3600, 9),
+            np.round(imuerr.gyrbias[2]*Angle.R2D*3600, 9),
+            np.round(imuerr.accbias[0]*1e5, 9),
+            np.round(imuerr.accbias[1]*1e5, 9),
+            np.round(imuerr.accbias[2]*1e5, 9),
+            np.round(imuerr.gyrscale[0]*1e6, 9),
+            np.round(imuerr.gyrscale[1]*1e6, 9),
+            np.round(imuerr.gyrscale[2]*1e6, 9),
+            np.round(imuerr.accscale[0]*1e6, 9),
+            np.round(imuerr.accscale[1]*1e6, 9),
+            np.round(imuerr.accscale[2]*1e6, 9)])
 
-        nav_result = np.vstack((nav_result, result1))
-        error_result = np.vstack((error_result, result2))
+        np.savetxt(f_nav, [result1], delimiter=" ", fmt="%.9f")
+        np.savetxt(f_err, [result2], delimiter=" ", fmt="%.9f")
 
-        progress = (timestamp - starttime) / (endtime - starttime) * 100
+        progress = (timestamp - starttime) / (endtime - starttime) * 100.0
         sys.stdout.write('\r[{:.2f}%]'.format(progress) + str(timestamp))
         sys.stdout.flush()
     
     print("\nFinished in {:.2f} seconds".format(time.time() - process_time))
-
-    np.savetxt(config['outputpath']+'/KF_GINS_Navresult.nav', nav_result, delimiter=" ",fmt="%.9f")    
-    np.savetxt(config['outputpath']+'/KF_GINS_IMU_ERR.txt', error_result, delimiter=" ",fmt="%.9f")
+    f_nav.close()
+    f_err.close()
