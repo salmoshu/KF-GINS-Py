@@ -23,7 +23,7 @@ imudatarate: 200
 # processing interval[s]
 # process until the imufile end if set endtime to -1
 starttime: 456300
-endtime: 456360
+endtime: -1
 
 # 初始状态
 # initial state

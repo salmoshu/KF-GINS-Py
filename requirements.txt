@@ -1,2 +1,4 @@
-PyYAML
-numpy-quaternion
+matplotlib==3.10.3
+numpy==2.2.6
+PyYAML==6.0.2
+scipy==1.15.3
