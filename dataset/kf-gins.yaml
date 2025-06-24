@@ -3,14 +3,11 @@
 # Windows下使用KF-GINS时，文件路径中不能有中文
 # When you run KF-GINS under Windows, there should be NO Chinese in the file path.
 
-# IMU和GNSS数据文件路径
-# imudata and gnssdata filepath
-imupath: "../dataset/Leador-A15.txt"
-gnsspath: "../dataset/GNSS-RTK.txt"
-
-# 输出文件夹路径
-# output folder path
-outputpath: "../dataset"
+# 输入输出文件（相对于项目根目录）
+# input and output files (relative to the project root directory)
+imupath: "./dataset/Leador-A15.txt"
+gnsspath: "./dataset/GNSS-RTK.txt"
+outputpath: "./dataset"
 
 # IMU文件列数 (只会用前7列IMU数据)
 # IMU data columns, only use the first seven columns

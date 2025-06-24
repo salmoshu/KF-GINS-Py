@@ -1,4 +1,8 @@
-matplotlib==3.10.3
-numpy==2.2.6
-PyYAML==6.0.2
-scipy==1.15.3
+# This file may be used to create an environment using:
+# $ conda create --name <env> --file <this file>
+# created-by: conda 24.9.2
+matplotlib=3.10.0=py310haa95532_0
+numpy=2.2.5=py310h5f75535_0
+python=3.10.18=h981015d_0
+pyyaml=6.0.2=py310h827c3e9_0
+scipy=1.15.3=py310h180bac5_0

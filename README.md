@@ -1,9 +1,19 @@
 ### 1. 安装依赖
-pip install -r requirements.txt
+```shell
+conda create --name kf-gins-env --file requirements.txt
+```
+或者手动安装以下内容：
+```shell
+# using conda
+conda install matplotlib numpy pyyaml scipy
+# or using pip
+pip install matplotlib numpy pyyaml scipy
+```
 
 ### 2. 执行命令
-<!-- E:\Proj-Enhanced\KF-GINS-Py\dataset\kf-gins.yaml -->
-python kf_gins.py --conf E:\Proj-Enhanced\KF-GINS-Py\dataset\kf-gins.yaml
+```shell
+python src/kf_gins.py --conf ./dataset/kf-gins.yaml
+```
 
 ### 3. py_IMU
-主要参考[py_IMU项目](https://github.com/Dennissy23/py_IMU)。
+项目主要参考[py_IMU](https://github.com/Dennissy23/py_IMU)。

@@ -3,13 +3,10 @@
 # Windows下使用KF-GINS时，文件路径中不能有中文
 # When you run KF-GINS under Windows, there should be NO Chinese in the file path.
 
-# IMU和GNSS数据文件路径
-# imudata and gnssdata filepath
+# 输入输出文件（相对于项目根目录）
+# input and output files (relative to the project root directory)
 imupath: ""
 gnsspath: ""
-
-# 输出文件夹路径
-# output folder path
 outputpath: ""
 
 # IMU文件列数 (只会用前7列IMU数据)

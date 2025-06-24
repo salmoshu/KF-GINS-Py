@@ -122,10 +122,11 @@ if __name__ == "__main__":
     
     print("\033[1m" + "KF-GINS: An EKF-Based GNSS/INS Integrated Navigation System\n" + "\033[0m")
 
+    src_dir += '/'
     try:
         filename = None
         if args.conf is None:
-            filename = '../dataset/kf-gins.yaml'
+            filename = os.path.abspath(src_dir + './dataset/kf-gins.yaml')
         else:
             filename = args.conf
         with open(filename, 'r', encoding='utf-8') as f:
@@ -137,9 +138,9 @@ if __name__ == "__main__":
     options = GINSOptions()
     loadConfig(config, options)
 
-    imupath    = config['imupath']
-    gnsspath   = config['gnsspath']
-    outputpath = config['outputpath']
+    imupath     = os.path.abspath(src_dir + config['imupath'])
+    gnsspath    = os.path.abspath(src_dir + config['gnsspath'])
+    outputpath  = os.path.abspath(src_dir + config['outputpath'])
     imudatalen  = int(config["imudatalen"])
     imudatarate = int(config["imudatarate"])
     starttime   = float(config["starttime"])
