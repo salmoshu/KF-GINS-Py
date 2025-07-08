@@ -27,7 +27,7 @@ python src/kf_gins.py --conf ./dataset/kf-gins.yaml
 
 ## 2. 致谢
 
-- 本项目感谢武汉大学卫星导航定位技术研究中心多源智能导航实验室(i2Nav)牛小骥教授团队开源的KF-GINS-Matlab软件平台；
+- 本项目感谢武汉大学卫星导航定位技术研究中心多源智能导航实验室(i2Nav)牛小骥教授团队开源的 KF-GINS 软件平台；
 - 感谢Github上的开源项目：[py_IMU](https://github.com/Dennissy23/py_IMU)。
 
 ## 3. 联系方式
